@@ -1,5 +1,5 @@
-use regex::Regex;
 use crate::bow::*;
+use regex::Regex;
 
 pub fn bow_from_text(text: String) -> BOW {
     let mut bow = BOW::default();
@@ -14,10 +14,9 @@ pub fn bow_from_text(text: String) -> BOW {
 
 pub fn tokens_from_text(text: &String) -> Vec<&str> {
     let pattern = Regex::new(r"\b\w{3,20}\b*").unwrap();
-    
+
     pattern.find_iter(text).map(|m| m.as_str()).collect()
 }
-
 
 #[test]
 fn test_tokens_from_text() {
@@ -26,7 +25,7 @@ fn test_tokens_from_text() {
 
     assert_eq!(tokens[0], "two");
     assert_eq!(tokens[1], "words");
-    
+
     let text = "two-words".to_string();
     let tokens = tokens_from_text(&text);
 
@@ -38,7 +37,7 @@ fn test_tokens_from_text() {
 
     assert_eq!(tokens[0], "two");
     assert_eq!(tokens[1], "words");
-    
+
     let text = "two?words".to_string();
     let tokens = tokens_from_text(&text);
 
@@ -68,9 +67,7 @@ fn test_tokens_from_text() {
 
     assert_eq!(tokens[0], "two");
     assert_eq!(tokens[1], "words");
-
 }
-
 
 #[test]
 fn test_bow_from_text() {

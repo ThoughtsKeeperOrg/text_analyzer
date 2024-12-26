@@ -1,7 +1,6 @@
 // use text_analyzer::bow::*;
 // use text_analyzer::bow_data_mapper;
 
-
 // it should:
 // - consume kafka event
 // - build bow and save it to mongo
@@ -10,16 +9,12 @@
 
 fn main() {
 
-    
+    //     // let future = bow_data_mapper::create();
+    //     // block_on(future);
 
-
-//     // let future = bow_data_mapper::create();
-//     // block_on(future);
-
-//     block_on(async_main());
-//     println!("Hello, world!");
+    //     block_on(async_main());
+    //     println!("Hello, world!");
 }
-
 
 // use futures::executor::block_on;
 
@@ -53,8 +48,6 @@ fn main() {
 
 //     // HttpResponse::Ok().body("user added")
 // }
-
-
 
 // /// Creates an index on the "username" field to force the values to be unique.
 // async fn create_username_index(client: &Client) {
@@ -90,16 +83,12 @@ fn main() {
 
 // fn main() {
 
-    
-
-
 //     // let future = bow_data_mapper::create();
 //     // block_on(future);
 
 //     block_on(async_main());
 //     println!("Hello, world!");
 // }
-
 
 // async fn async_main() {
 //     let f1 = bow_data_mapper::create();

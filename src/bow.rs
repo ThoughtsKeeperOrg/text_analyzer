@@ -1,7 +1,7 @@
+use crate::token_similarity::are_tokens_similar;
+use serde::{Deserialize, Serialize};
 use std::cmp;
 use std::collections::HashMap;
-use serde::{Deserialize, Serialize};
-use crate::token_similarity::are_tokens_similar;
 
 const FUZZY_MATCH_DISCOUNT: f32 = 0.9;
 
@@ -15,35 +15,33 @@ pub struct BOW {
 
 impl BOW {
     pub fn add_word(&mut self, word: String) {
-        self.words.entry(word)
-                  .and_modify(|counter| *counter += 1)
-                  .or_insert(1);
-        self.words_count += 1; 
+        self.words
+            .entry(word)
+            .and_modify(|counter| *counter += 1)
+            .or_insert(1);
+        self.words_count += 1;
     }
 }
 
 pub fn compute_similarity(a: &BOW, b: &BOW) -> f32 {
-    // scale 0..1
-    if a.words == b.words { return 1.0 }
+    if a.words == b.words {
+        return 1.0;
+    }
 
     let longest_len = cmp::max(a.words_count, b.words_count) as f32;
-
     let mut similar_tokens = 0.0;
 
-
     for (token_a, count_a) in &a.words {
-        println!("{token_a}: {count_a}");
-
         match b.words.get(token_a) {
             Some(count_b) => {
                 similar_tokens += common_count(count_a, count_b);
-            },
+            }
             None => {
                 for token_b in b.words.keys() {
                     if are_tokens_similar(token_a, token_b) {
                         let count_b = b.words.get(token_b).unwrap();
                         similar_tokens += common_count(count_a, count_b) * FUZZY_MATCH_DISCOUNT;
-                        break
+                        break;
                     }
                 }
             }
@@ -136,7 +134,7 @@ fn test_add_word() {
     assert_eq!(bow.words_count, 1);
     assert_eq!(bow.words.len(), 1);
     assert_eq!(bow.words.get(&word), Some(1).as_ref());
-    
+
     bow.add_word(word2.clone());
 
     assert_eq!(bow.words_count, 2);
