@@ -2,7 +2,11 @@
 // use text_analyzer::bow_data_mapper;
 
 
-
+// it should:
+// - consume kafka event
+// - build bow and save it to mongo
+// - compute similarities to other bow and store to neo4j
+// - produce event 'text_analyzed'
 
 fn main() {
 

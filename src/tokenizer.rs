@@ -9,7 +9,6 @@ pub fn bow_from_text(text: String) -> BOW {
         bow.add_word(token.to_string());
     }
 
-    // println!("{:?}", tokens);
     bow
 }
 
