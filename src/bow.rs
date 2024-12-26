@@ -5,7 +5,6 @@ use std::collections::HashMap;
 
 const FUZZY_MATCH_DISCOUNT: f32 = 0.9;
 
-// , PartialEq, Eq
 #[derive(Default, Serialize, Deserialize)]
 pub struct BOW {
     pub id: String,
