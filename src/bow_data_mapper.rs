@@ -1,10 +1,50 @@
 use crate::bow::BOW;
 use crate::mongo_database;
 use futures::stream::{StreamExt, TryStreamExt};
-use mongodb::{bson, Cursor};
+use mongodb::{bson, Collection, Cursor};
 use mongodb::{bson::doc, options::IndexOptions, Database, IndexModel};
 
 const COLLECTION_NAME: &str = "bows";
+
+pub struct Mapper {
+    pub db: Database,
+    pub collection: Collection<BOW>
+}
+
+impl Mapper {
+    pub async fn init() -> Self {
+        let db = mongo_database::establish_connection().await;
+        let collection = db.collection::<BOW>(COLLECTION_NAME);
+        Self { db: db, collection: collection }
+    }
+
+    pub async fn save(&self, entity: &BOW) {
+        let filter = doc! { "entity_id": entity.entity_id.clone() };
+        let data = doc! { "$set": bson::to_bson(&entity).expect("Entity should be serializable") };
+        self.collection
+            .update_one(filter, data)
+            .upsert(true)
+            .await
+            .unwrap();
+    }
+    
+    pub async fn find(&self, entity_id: &String) -> Option<BOW> {
+        let filter = doc! { "entity_id": entity_id.clone() };
+        self.collection.find_one(filter).await.unwrap()
+    }
+    
+    pub async fn count(&self) -> u64 {
+        self.collection.count_documents(doc! {}).await.unwrap()
+    }
+    
+    pub async fn delete_all(&self) {
+        self.collection.delete_many(doc! {}).await.unwrap();
+    }
+    
+    pub async fn all(&self) -> Cursor<BOW> {
+        self.collection.find(doc! {}).await.unwrap()
+    }
+}
 
 pub async fn create_index(database: &Database) {
     let options = IndexOptions::builder().unique(true).build();
@@ -17,43 +57,6 @@ pub async fn create_index(database: &Database) {
         .create_index(model)
         .await
         .expect("creating an index should succeed");
-}
-
-pub async fn save(entity: &BOW) {
-    let db = mongo_database::establish_connection().await;
-    let collection = db.collection::<BOW>(COLLECTION_NAME);
-    let filter = doc! { "entity_id": entity.entity_id.clone() };
-    let data = doc! { "$set": bson::to_bson(&entity).expect("Entity should be serializable") };
-    collection
-        .update_one(filter, data)
-        .upsert(true)
-        .await
-        .unwrap();
-}
-
-pub async fn find(entity_id: &String) -> Option<BOW> {
-    let db = mongo_database::establish_connection().await;
-    let collection = db.collection::<BOW>(COLLECTION_NAME);
-    let filter = doc! { "entity_id": entity_id.clone() };
-    collection.find_one(filter).await.unwrap()
-}
-
-pub async fn count() -> u64 {
-    let db = mongo_database::establish_connection().await;
-    let collection = db.collection::<BOW>(COLLECTION_NAME);
-    collection.count_documents(doc! {}).await.unwrap()
-}
-
-pub async fn delete_all() {
-    let db = mongo_database::establish_connection().await;
-    let collection = db.collection::<BOW>(COLLECTION_NAME);
-    collection.delete_many(doc! {}).await.unwrap();
-}
-
-pub async fn all() -> Cursor<BOW> {
-    let db = mongo_database::establish_connection().await;
-    let collection = db.collection::<BOW>(COLLECTION_NAME);
-    collection.find(doc! {}).await.unwrap()
 }
 
 #[cfg(test)]
@@ -71,20 +74,23 @@ async fn test_crud() {
     })
     .await
     .expect("Task panicked");
-    delete_all().await;
+    
+    let collection = Mapper::init().await;
+
+    collection.delete_all().await;
 
     let mut bow = BOW::default();
     bow.entity_id = "11".to_string();
     bow.add_word("word".to_string());
 
-    save(&bow).await;
-    save(&bow).await;
+    collection.save(&bow).await;
+    collection.save(&bow).await;
     bow.add_word("other".to_string());
-    save(&bow).await;
+    collection.save(&bow).await;
 
-    assert_eq!(count().await, 1);
+    assert_eq!(collection.count().await, 1);
 
-    let bow_from_db = find(&bow.entity_id).await.unwrap();
+    let bow_from_db = collection.find(&bow.entity_id).await.unwrap();
     assert_eq!(bow, bow_from_db);
 
     let mut bow2 = BOW::default();
@@ -92,21 +98,21 @@ async fn test_crud() {
     bow2.add_word("word".to_string());
     bow2.add_word("word".to_string());
 
-    save(&bow2).await;
-    assert_eq!(count().await, 2);
+    collection.save(&bow2).await;
+    assert_eq!(collection.count().await, 2);
 
     let items = vec![bow, bow2];
 
     let mut i: usize = 0;
-    let mut cursor = all().await;
+    let mut cursor = collection.all().await;
 
     while let Some(doc) = cursor.next().await {
         assert_eq!(doc.unwrap(), items[i]);
         i += 1;
     }
 
-    delete_all().await;
-    assert_eq!(count().await, 0);
+    collection.delete_all().await;
+    assert_eq!(collection.count().await, 0);
 }
 
 #[tokio::test]
