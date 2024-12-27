@@ -5,9 +5,9 @@ use std::collections::HashMap;
 
 const FUZZY_MATCH_DISCOUNT: f32 = 0.9;
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Default, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct BOW {
-    pub id: String,
+    pub entity_id: String,
     pub words: HashMap<String, i32>,
     pub words_count: i32,
 }
@@ -115,7 +115,7 @@ fn test_compute_similarity() {
 fn test_initalize_new_bow() {
     let new_bow = BOW::default();
 
-    assert_eq!(new_bow.id, "".to_string());
+    assert_eq!(new_bow.entity_id, "".to_string());
     assert_eq!(new_bow.words, HashMap::new());
 }
 

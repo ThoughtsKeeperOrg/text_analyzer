@@ -3,8 +3,9 @@
 
 // it should:
 // - consume kafka event
-// - build bow and save it to mongo
+// - build bow and save it to mongo (create or update)
 // - compute similarities to other bow and store to neo4j
+// - after update of last neo4j connections make query if exists documents without computed with this similarity and compute it
 // - produce event 'text_analyzed'
 
 fn main() {

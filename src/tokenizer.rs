@@ -74,6 +74,6 @@ fn test_bow_from_text() {
     let text1 = "two words".to_string();
     let bow = bow_from_text(text1.clone());
 
-    assert_eq!(bow.id, "".to_string());
+    assert_eq!(bow.entity_id, "".to_string());
     assert_eq!(bow.words.len(), 2);
 }
