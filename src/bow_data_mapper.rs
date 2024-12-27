@@ -1,6 +1,5 @@
 use crate::bow::BOW;
 use crate::mongo_database;
-use futures::stream::{StreamExt, TryStreamExt};
 use mongodb::{bson, Collection, Cursor};
 use mongodb::{bson::doc, options::IndexOptions, Database, IndexModel};
 
@@ -8,14 +7,17 @@ const COLLECTION_NAME: &str = "bows";
 
 pub struct Mapper {
     pub db: Database,
-    pub collection: Collection<BOW>
+    pub collection: Collection<BOW>,
 }
 
 impl Mapper {
     pub async fn init() -> Self {
         let db = mongo_database::establish_connection().await;
         let collection = db.collection::<BOW>(COLLECTION_NAME);
-        Self { db: db, collection: collection }
+        Self {
+            db: db,
+            collection: collection,
+        }
     }
 
     pub async fn save(&self, entity: &BOW) {
@@ -27,20 +29,20 @@ impl Mapper {
             .await
             .unwrap();
     }
-    
+
     pub async fn find(&self, entity_id: &String) -> Option<BOW> {
         let filter = doc! { "entity_id": entity_id.clone() };
         self.collection.find_one(filter).await.unwrap()
     }
-    
+
     pub async fn count(&self) -> u64 {
         self.collection.count_documents(doc! {}).await.unwrap()
     }
-    
+
     pub async fn delete_all(&self) {
         self.collection.delete_many(doc! {}).await.unwrap();
     }
-    
+
     pub async fn all(&self) -> Cursor<BOW> {
         self.collection.find(doc! {}).await.unwrap()
     }
@@ -65,6 +67,8 @@ use crate::mongo_database::establish_connection;
 use tokio::time::timeout;
 #[cfg(test)]
 use tokio::time::Duration;
+#[cfg(test)]
+use futures::stream::StreamExt;
 
 #[tokio::test]
 async fn test_crud() {
@@ -74,7 +78,7 @@ async fn test_crud() {
     })
     .await
     .expect("Task panicked");
-    
+
     let collection = Mapper::init().await;
 
     collection.delete_all().await;
