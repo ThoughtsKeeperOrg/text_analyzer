@@ -24,7 +24,7 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: example
       neo4j:
         image: neo4j
-        environment:
+        env:
         - NEO4J_AUTH=neo4j/your_password
         ports:
         - 7474:7474
