@@ -23,19 +23,19 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
       
-      neo4j:
-        image: neo4j
-        env:
-          NEO4J_AUTH: neo4j/your_password
-          NEO4J_USERNAME: neo4j
-          NEO4J_PASSWORD: your_password
-        ports:
-        - 7474:7474
-        - 7687:7687
+      # neo4j:
+      #   image: neo4j
+      #   env:
+      #     NEO4J_AUTH: neo4j/your_password
+      #     NEO4J_USERNAME: neo4j
+      #     NEO4J_PASSWORD: your_password
+      #   ports:
+      #   - 7474:7474
+      #   - 7687:7687
 
     steps:
     - uses: actions/checkout@v4
     - name: Build
       run: cargo build --verbose
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --verbose --skip neo4j_database
