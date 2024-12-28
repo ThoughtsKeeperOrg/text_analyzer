@@ -64,11 +64,11 @@ pub async fn create_index(database: &Database) {
 #[cfg(test)]
 use crate::mongo_database::establish_connection;
 #[cfg(test)]
+use futures::stream::StreamExt;
+#[cfg(test)]
 use tokio::time::timeout;
 #[cfg(test)]
 use tokio::time::Duration;
-#[cfg(test)]
-use futures::stream::StreamExt;
 
 #[tokio::test]
 async fn test_crud() {

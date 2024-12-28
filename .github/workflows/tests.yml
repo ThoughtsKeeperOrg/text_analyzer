@@ -22,6 +22,13 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
+      neo4j:
+        image: neo4j
+        environment:
+            - NEO4J_AUTH=neo4j/your_password
+        ports:
+          - "7474:7474"
+          - "7687:7687"
 
     steps:
     - uses: actions/checkout@v4
