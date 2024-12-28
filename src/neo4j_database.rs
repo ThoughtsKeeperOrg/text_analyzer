@@ -6,7 +6,7 @@ pub struct Client {
 
 impl Client {
     pub async fn init() -> Self {
-        let host = std::env::var("NEO4J_HOST").unwrap_or_else(|_| "localhost".into());
+        let host = std::env::var("NEO4J_HOST").unwrap_or_else(|_| "neo4j".into());
         let port = std::env::var("NEO4J_PORT").unwrap_or_else(|_| "7687".into());
         let user = std::env::var("NEO4J_USER").unwrap_or_else(|_| "neo4j".into());
         let password = std::env::var("NEO4J_PASSWORD").unwrap_or_else(|_| "your_password".into());
