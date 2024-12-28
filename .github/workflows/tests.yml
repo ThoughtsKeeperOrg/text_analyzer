@@ -27,8 +27,8 @@ jobs:
         image: neo4j
         env:
           NEO4J_AUTH: neo4j/your_password
-          NEO4J_USERNAME: neo4j/your_password
-          NEO4J_PASSWORD: neo4j/your_password
+          NEO4J_USERNAME: neo4j
+          NEO4J_PASSWORD: your_password
         ports:
         - 7474:7474
         - 7687:7687
