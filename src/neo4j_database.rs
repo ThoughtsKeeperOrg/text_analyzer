@@ -160,6 +160,19 @@ impl Client {
         ids
     }
 
+    pub async fn get_similarity_estimation(
+        &self,
+        a_entity_id: &String,
+        b_entity_id: &String,
+    ) -> f32 {
+        let row = self
+            .find_relation(&a_entity_id, &b_entity_id)
+            .await
+            .unwrap();
+        let relation: Relation = row.get("relation").unwrap();
+        relation.get::<f32>("estimation").unwrap()
+    }
+
     pub async fn create_constraints(&self) {
         let result = self
             .graph
@@ -257,12 +270,9 @@ async fn test_create_similarity_relation() {
     let count = client.count_by_entity_id(&b_entity_id).await;
     assert_eq!(count, 1);
 
-    let row = client
-        .find_relation(&a_entity_id, &b_entity_id)
-        .await
-        .unwrap();
-    let relation: Relation = row.get("relation").unwrap();
-    let estimation_from_db = relation.get::<f32>("estimation").unwrap();
+    let estimation_from_db = client
+        .get_similarity_estimation(&a_entity_id, &b_entity_id)
+        .await;
     assert_eq!(estimation_from_db, 0.33);
 
     let _ = client
@@ -274,12 +284,9 @@ async fn test_create_similarity_relation() {
     let count = client.count_by_entity_id(&b_entity_id).await;
     assert_eq!(count, 1);
 
-    let row = client
-        .find_relation(&a_entity_id, &b_entity_id)
-        .await
-        .unwrap();
-    let relation: Relation = row.get("relation").unwrap();
-    let estimation_from_db = relation.get::<f32>("estimation").unwrap();
+    let estimation_from_db = client
+        .get_similarity_estimation(&a_entity_id, &b_entity_id)
+        .await;
     assert_eq!(estimation_from_db, 0.7);
 
     let _ = client.delete_all().await;

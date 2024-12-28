@@ -77,7 +77,7 @@ async fn test_crud() {
         mongo_database::init();
     })
     .await
-    .expect("Task panicked");
+    .expect("Mongo initialization failed");
 
     let collection = Mapper::init().await;
 

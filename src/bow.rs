@@ -1,4 +1,5 @@
 use crate::token_similarity::are_tokens_similar;
+use crate::tokenizer::tokens_from_text;
 use serde::{Deserialize, Serialize};
 use std::cmp;
 use std::collections::HashMap;
@@ -19,6 +20,16 @@ impl BOW {
             .and_modify(|counter| *counter += 1)
             .or_insert(1);
         self.words_count += 1;
+    }
+
+    pub fn from_text(text: String) -> Self {
+        let mut bow = BOW::default();
+        let tokens = tokens_from_text(&text);
+
+        for token in tokens.iter() {
+            bow.add_word(token.to_string());
+        }
+        bow
     }
 }
 
@@ -145,4 +156,13 @@ fn test_add_word() {
     assert_eq!(bow.words_count, 3);
     assert_eq!(bow.words.len(), 2);
     assert_eq!(bow.words.get(&word2), Some(2).as_ref());
+}
+
+#[test]
+fn test_bow_from_text() {
+    let text1 = "two words".to_string();
+    let bow = BOW::from_text(text1.clone());
+
+    assert_eq!(bow.entity_id, "".to_string());
+    assert_eq!(bow.words.len(), 2);
 }
