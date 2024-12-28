@@ -106,4 +106,5 @@ async fn test_process() {
     assert_eq!(estimation_from_db, 0.0);
 
     collection.delete_all().await;
+    let _ = graph_client.delete_all().await;
 }
