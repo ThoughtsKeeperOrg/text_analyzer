@@ -54,7 +54,10 @@ impl Processor {
     }
 }
 
+use serial_test::serial;
+
 #[tokio::test]
+#[serial]
 async fn test_process() {
     let graph_client = Client::init().await;
     let collection = Mapper::init().await;
