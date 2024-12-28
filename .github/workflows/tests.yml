@@ -23,6 +23,7 @@ jobs:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
       
+      # TODO: configure it
       # neo4j:
       #   image: neo4j
       #   env:
