@@ -31,9 +31,9 @@ async fn consume_messages(
     loop {
         let mss = con.poll()?;
         if mss.is_empty() {
-            // println!("No messages available right now. Sleep for now...");
+            println!("No messages available right now. Sleep for now...");
             thread::sleep(Duration::from_millis(1000));
-            // println!("Sleep is over");
+            println!("Sleep is over");
         }
 
         for ms in mss.iter() {
@@ -44,7 +44,7 @@ async fn consume_messages(
                 let entity_id = parsed_entity["entity"]["id"].to_string();
                 let text = parsed_entity["entity"]["content"].to_string();
 
-                // println!("Process: {:?}", parsed_entity);
+                println!("Process: {:?}", parsed_entity);
 
                 let processor = text_processor::Processor::init().await;
                 processor.call(text, entity_id).await;
