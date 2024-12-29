@@ -27,7 +27,7 @@ impl BOW {
         let tokens = tokens_from_text(&text);
 
         for token in tokens.iter() {
-            bow.add_word(token.to_string());
+            bow.add_word(token.to_string().to_lowercase());
         }
         bow
     }
