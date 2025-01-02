@@ -22,10 +22,10 @@ ENV:
 TEXT_ANALYZER_DB_NAME = text_analyzer
 KAFKA_HOST = kafka-broker
 KAFKA_PORT = 9093
-NEO4J_HOST=neo4j
-NEO4J_PORT=7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=your_password
-NEO4J_DB=neo4j
+NEO4J_DB = neo4j
+NEO4J_HOST = neo4j
+NEO4J_PORT = 7687
+NEO4J_USER = neo4j
+NEO4J_PASSWORD = your_password
 MONGODB_URI = mongodb://root:example@mongo:27017/
 ```
