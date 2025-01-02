@@ -16,7 +16,6 @@ pub async fn start() {
     }
 }
 
-// TODO: run it in multiple threads
 async fn consume_messages(
     group: String,
     topic: String,
@@ -48,7 +47,7 @@ async fn consume_messages(
 
                 println!("Process: {:?}", parsed_entity);
 
-                // TODO: set limit for concurent threads
+                // TODO: set limit for concurent tasks
                 set.spawn(async move {
                     let processor = text_processor::Processor::init().await;
                     processor.call(text, entity_id).await;
