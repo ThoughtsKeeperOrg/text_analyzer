@@ -4,15 +4,7 @@ use text_analyzer::neo4j_database;
 
 #[tokio::main]
 async fn main() {
-    tokio::task::spawn_blocking(|| {
-        mongo_database::init();
-    })
-    .await
-    .expect("Mongo initialization failed");
-    neo4j_database::Client::init()
-        .await
-        .create_constraints()
-        .await;
-
+    mongo_database::prepare().await;
+    neo4j_database::prepare().await;
     entities_updates_consumer::start().await;
 }

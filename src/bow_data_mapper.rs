@@ -72,12 +72,8 @@ use tokio::time::Duration;
 
 #[tokio::test]
 async fn test_crud() {
-    tokio::task::spawn_blocking(|| {
-        std::env::set_var("TEXT_ANALYZER_DB_NAME", "test_text_analyzer");
-        mongo_database::init();
-    })
-    .await
-    .expect("Mongo initialization failed");
+    std::env::set_var("TEXT_ANALYZER_DB_NAME", "test_text_analyzer");
+    mongo_database::prepare().await;
 
     let collection = Mapper::init().await;
 

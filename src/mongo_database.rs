@@ -1,28 +1,6 @@
 use crate::bow_data_mapper;
 use mongodb::{Client, Database};
-use std::sync::Once;
 
-static mut DATABASE: Option<Database> = None;
-static INIT: Once = Once::new();
-
-pub fn init() {
-    unsafe {
-        INIT.call_once(|| {
-            DATABASE = Some(prepare());
-        });
-    }
-}
-
-pub fn database() -> &'static Database {
-    unsafe {
-        match &DATABASE {
-            Some(db) => &db,
-            None => panic!("Cant obtain db"),
-        }
-    }
-}
-
-#[tokio::main]
 pub async fn prepare() -> Database {
     let db = establish_connection().await;
     create_index(&db).await;
@@ -70,10 +48,3 @@ async fn test_create_index() {
     assert_eq!(collection_names[0], "bows");
 }
 
-#[test]
-fn test_init() {
-    std::env::set_var("TEXT_ANALYZER_DB_NAME", "test_text_analyzer");
-
-    init();
-    database();
-}

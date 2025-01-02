@@ -1,5 +1,12 @@
 use neo4rs::*;
 
+pub async fn prepare() {
+    Client::init()
+    .await
+    .create_constraints()
+    .await;
+}
+
 pub struct Client {
     graph: Graph,
 }
