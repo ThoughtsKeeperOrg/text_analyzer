@@ -1,8 +1,8 @@
 use crate::text_processor;
 use kafka::consumer::{Consumer, FetchOffset, GroupOffsetStorage};
 use kafka::error::Error as KafkaError;
-use std::{thread, time::Duration};
 use tokio::task::JoinSet;
+use tokio::time::{sleep, Duration};
 
 pub async fn start() {
     let host = std::env::var("KAFKA_HOST").unwrap_or_else(|_| "localhost".into());
@@ -32,7 +32,7 @@ async fn consume_messages(
         let mss = con.poll()?;
         if mss.is_empty() {
             println!("No messages available right now. Sleep 1s");
-            thread::sleep(Duration::from_millis(1000));
+            let _ = sleep(Duration::from_millis(1000)).await;
         }
 
         for ms in mss.iter() {
