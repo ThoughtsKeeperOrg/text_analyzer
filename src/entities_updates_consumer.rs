@@ -2,6 +2,7 @@ use crate::text_processor;
 use kafka::consumer::{Consumer, FetchOffset, GroupOffsetStorage};
 use kafka::error::Error as KafkaError;
 use std::{thread, time::Duration};
+use tokio::task::JoinSet;
 
 pub async fn start() {
     let host = std::env::var("KAFKA_HOST").unwrap_or_else(|_| "localhost".into());
@@ -31,12 +32,13 @@ async fn consume_messages(
     loop {
         let mss = con.poll()?;
         if mss.is_empty() {
-            println!("No messages available right now. Sleep for now...");
+            println!("No messages available right now. Sleep 1s");
             thread::sleep(Duration::from_millis(1000));
-            println!("Sleep is over");
         }
 
         for ms in mss.iter() {
+            let mut set = JoinSet::new();
+
             for m in ms.messages() {
                 let json_string = String::from_utf8_lossy(&m.value);
                 let parsed_entity: serde_json::Value = serde_json::from_str(&json_string).unwrap();
@@ -46,10 +48,14 @@ async fn consume_messages(
 
                 println!("Process: {:?}", parsed_entity);
 
-                let processor = text_processor::Processor::init().await;
-                processor.call(text, entity_id).await;
-                // TODO: produce event "text analyzed"
+                // TODO: set limit for concurent threads
+                set.spawn(async move {
+                    let processor = text_processor::Processor::init().await;
+                    processor.call(text, entity_id).await;
+                    // TODO: produce event "text analyzed"
+                });
             }
+            let _ = set.join_all().await;
             let _ = con.consume_messageset(ms);
         }
 
