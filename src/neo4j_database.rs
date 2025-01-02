@@ -1,10 +1,11 @@
 use neo4rs::*;
 
-pub async fn prepare() {
-    Client::new()
-    .await
-    .create_constraints()
+pub async fn prepare() -> Client{
+    let client = Client::new()
     .await;
+    client.create_constraints()
+    .await;
+    client
 }
 
 pub struct Client {
@@ -220,9 +221,8 @@ async fn test_connect_to_db() {
 #[tokio::test]
 #[serial]
 async fn test_uniqueness_constraint() {
-    let client = Client::new().await;
+    let client = prepare().await;
     let _ = client.delete_all().await;
-    let _ = client.create_constraints().await;
 
     let entity_id = "999".to_string();
 
@@ -234,8 +234,7 @@ async fn test_uniqueness_constraint() {
 #[tokio::test]
 #[serial]
 async fn test_crud() {
-    let client = Client::new().await;
-    let _ = client.create_constraints();
+    let client = prepare().await;
     let _ = client.delete_all().await;
 
     let entity_id = "1111".to_string();
@@ -256,8 +255,7 @@ async fn test_crud() {
 #[tokio::test]
 #[serial]
 async fn test_create_similarity_relation() {
-    let client = Client::new().await;
-    let _ = client.create_constraints().await;
+    let client = prepare().await;
     let _ = client.delete_all().await;
 
     let a_entity_id = "1111".to_string();
@@ -302,8 +300,7 @@ async fn test_create_similarity_relation() {
 #[tokio::test]
 #[serial]
 async fn test_find_missing_relations() {
-    let client = Client::new().await;
-    let _ = client.create_constraints().await;
+    let client = prepare().await;
     let _ = client.delete_all().await;
 
     let a_entity_id = "11111".to_string();
