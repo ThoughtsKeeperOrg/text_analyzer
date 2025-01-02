@@ -1,5 +1,5 @@
 use crate::bow::{compute_similarity, BOW};
-use crate::bow_data_mapper::Mapper;
+use crate::bow_data_mapper;
 use crate::neo4j_database::Client;
 use futures::stream::StreamExt;
 
@@ -11,7 +11,7 @@ pub struct Processor {
 impl Processor {
     pub async fn new() -> Self {
         Self {
-            bow_mapper: Mapper::new().await,
+            bow_mapper: bow_data_mapper::Mapper::new().await,
             graph_client: Client::new().await,
         }
     }
@@ -60,7 +60,7 @@ use serial_test::serial;
 #[serial]
 async fn test_process() {
     let graph_client = Client::new().await;
-    let collection = Mapper::new().await;
+    let collection = bow_data_mapper::Mapper::new().await;
     collection.delete_all().await;
 
     let mut bow1 = BOW::default();
