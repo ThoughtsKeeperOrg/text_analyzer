@@ -11,8 +11,9 @@ text_analyzer:
     command: /text_analyzer
     restart: always
     depends_on:
-      - mongo
       - kafka-broker
+      - mongo
+      - neo4j
 ```
 
 
