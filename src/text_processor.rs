@@ -9,9 +9,9 @@ pub struct Processor {
 }
 
 impl Processor {
-    pub async fn init() -> Self {
+    pub async fn new() -> Self {
         Self {
-            bow_mapper: Mapper::init().await,
+            bow_mapper: Mapper::new().await,
             graph_client: Client::new().await,
         }
     }
@@ -60,7 +60,7 @@ use serial_test::serial;
 #[serial]
 async fn test_process() {
     let graph_client = Client::new().await;
-    let collection = Mapper::init().await;
+    let collection = Mapper::new().await;
     collection.delete_all().await;
 
     let mut bow1 = BOW::default();
@@ -86,7 +86,7 @@ async fn test_process() {
     let text = "aaaaaa bbbbbb cccccc".to_string();
     let entity_id = "99999".to_string();
 
-    let processor = Processor::init().await;
+    let processor = Processor::new().await;
 
     processor.call(text, entity_id.clone()).await;
 

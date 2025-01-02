@@ -49,7 +49,7 @@ async fn consume_messages(
 
                 // TODO: set limit for concurent tasks
                 set.spawn(async move {
-                    let processor = text_processor::Processor::init().await;
+                    let processor = text_processor::Processor::new().await;
                     processor.call(text, entity_id).await;
                     // TODO: produce event "text analyzed"
                 });

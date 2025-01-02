@@ -11,7 +11,7 @@ pub struct Mapper {
 }
 
 impl Mapper {
-    pub async fn init() -> Self {
+    pub async fn new() -> Self {
         let db = mongo_database::establish_connection().await;
         let collection = db.collection::<BOW>(COLLECTION_NAME);
         Self {
@@ -75,7 +75,7 @@ async fn test_crud() {
     std::env::set_var("TEXT_ANALYZER_DB_NAME", "test_text_analyzer");
     mongo_database::prepare().await;
 
-    let collection = Mapper::init().await;
+    let collection = Mapper::new().await;
 
     collection.delete_all().await;
 
