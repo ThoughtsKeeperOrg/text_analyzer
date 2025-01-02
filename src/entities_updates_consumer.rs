@@ -7,7 +7,7 @@ pub async fn start() {
     let host = std::env::var("KAFKA_HOST").unwrap_or_else(|_| "localhost".into());
     let port = std::env::var("KAFKA_PORT").unwrap_or_else(|_| "9092".into());
     let topic = "entities_updates".to_owned();
-    let group = "my-group".to_owned();
+    let group = "text_analyzer".to_owned();
     let broker = format!("{host}:{port}").to_owned();
 
     if let Err(e) = consume_messages(group, topic, vec![broker]).await {
