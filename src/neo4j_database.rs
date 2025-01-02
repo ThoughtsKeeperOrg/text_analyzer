@@ -1,7 +1,7 @@
 use neo4rs::*;
 
 pub async fn prepare() {
-    Client::init()
+    Client::new()
     .await
     .create_constraints()
     .await;
@@ -12,7 +12,7 @@ pub struct Client {
 }
 
 impl Client {
-    pub async fn init() -> Self {
+    pub async fn new() -> Self {
         let host = std::env::var("NEO4J_HOST").unwrap_or_else(|_| "localhost".into());
         let port = std::env::var("NEO4J_PORT").unwrap_or_else(|_| "7687".into());
         let user = std::env::var("NEO4J_USER").unwrap_or_else(|_| "neo4j".into());
@@ -208,7 +208,7 @@ use serial_test::serial;
 
 #[tokio::test]
 async fn test_connect_to_db() {
-    let client = Client::init().await;
+    let client = Client::new().await;
 
     let mut result = client.graph.execute(query("RETURN 1")).await.unwrap();
     let row = result.next().await.unwrap().unwrap();
@@ -220,7 +220,7 @@ async fn test_connect_to_db() {
 #[tokio::test]
 #[serial]
 async fn test_uniqueness_constraint() {
-    let client = Client::init().await;
+    let client = Client::new().await;
     let _ = client.delete_all().await;
     let _ = client.create_constraints().await;
 
@@ -234,7 +234,7 @@ async fn test_uniqueness_constraint() {
 #[tokio::test]
 #[serial]
 async fn test_crud() {
-    let client = Client::init().await;
+    let client = Client::new().await;
     let _ = client.create_constraints();
     let _ = client.delete_all().await;
 
@@ -256,7 +256,7 @@ async fn test_crud() {
 #[tokio::test]
 #[serial]
 async fn test_create_similarity_relation() {
-    let client = Client::init().await;
+    let client = Client::new().await;
     let _ = client.create_constraints().await;
     let _ = client.delete_all().await;
 
@@ -302,7 +302,7 @@ async fn test_create_similarity_relation() {
 #[tokio::test]
 #[serial]
 async fn test_find_missing_relations() {
-    let client = Client::init().await;
+    let client = Client::new().await;
     let _ = client.create_constraints().await;
     let _ = client.delete_all().await;
 

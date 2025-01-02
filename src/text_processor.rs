@@ -12,7 +12,7 @@ impl Processor {
     pub async fn init() -> Self {
         Self {
             bow_mapper: Mapper::init().await,
-            graph_client: Client::init().await,
+            graph_client: Client::new().await,
         }
     }
 
@@ -59,7 +59,7 @@ use serial_test::serial;
 #[tokio::test]
 #[serial]
 async fn test_process() {
-    let graph_client = Client::init().await;
+    let graph_client = Client::new().await;
     let collection = Mapper::init().await;
     collection.delete_all().await;
 
