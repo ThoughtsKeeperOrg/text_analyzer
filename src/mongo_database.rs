@@ -47,4 +47,3 @@ async fn test_create_index() {
 
     assert_eq!(collection_names[0], "bows");
 }
-

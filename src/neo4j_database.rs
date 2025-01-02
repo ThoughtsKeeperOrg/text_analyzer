@@ -1,10 +1,8 @@
 use neo4rs::*;
 
-pub async fn prepare() -> Client{
-    let client = Client::new()
-    .await;
-    client.create_constraints()
-    .await;
+pub async fn prepare() -> Client {
+    let client = Client::new().await;
+    client.create_constraints().await;
     client
 }
 
