@@ -29,3 +29,5 @@ NEO4J_USER = neo4j
 NEO4J_PASSWORD = your_password
 MONGODB_URI = mongodb://root:example@mongo:27017/
 ```
+
+Testted on `kafka:3.9.0`, `neo4j:5.26`, `MongoDB 8.0`
