@@ -48,6 +48,12 @@ impl Mapper {
     }
 }
 
+pub async fn prepare() -> Database {
+    let db = mongo_database::establish_connection().await;
+    create_index(&db).await;
+    db
+}
+
 pub async fn create_index(database: &Database) {
     let options = IndexOptions::builder().unique(true).build();
     let model = IndexModel::builder()
@@ -73,7 +79,7 @@ use tokio::time::Duration;
 #[tokio::test]
 async fn test_crud() {
     std::env::set_var("TEXT_ANALYZER_DB_NAME", "test_text_analyzer");
-    mongo_database::prepare().await;
+    prepare().await;
 
     let collection = Mapper::new().await;
 
