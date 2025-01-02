@@ -5,14 +5,14 @@ use futures::stream::StreamExt;
 
 pub struct Processor {
     bow_mapper: bow_data_mapper::Mapper,
-    graph_client: neo4j_repository::Client,
+    graph_repository: neo4j_repository::Repository,
 }
 
 impl Processor {
     pub async fn new() -> Self {
         Self {
             bow_mapper: bow_data_mapper::Mapper::new().await,
-            graph_client: neo4j_repository::Client::new().await,
+            graph_repository: neo4j_repository::Repository::new().await,
         }
     }
 
@@ -36,14 +36,14 @@ impl Processor {
         }
         let similarity = compute_similarity(&new_bow, &current_bow);
 
-        self.graph_client
+        self.graph_repository
             .create_similarity_relation(&new_bow.entity_id, &current_bow.entity_id, similarity)
             .await;
     }
 
     async fn update_missing_similarities(&self, new_bow: &BOW) {
         let missing_ids = self
-            .graph_client
+            .graph_repository
             .find_missing_relations(&new_bow.entity_id)
             .await;
         for entity_id in missing_ids.iter() {
@@ -59,7 +59,7 @@ use serial_test::serial;
 #[tokio::test]
 #[serial]
 async fn test_process() {
-    let graph_client = neo4j_repository::Client::new().await;
+    let graph_repository = neo4j_repository::Repository::new().await;
     let collection = bow_data_mapper::Mapper::new().await;
     collection.delete_all().await;
 
@@ -93,21 +93,21 @@ async fn test_process() {
     let new_bow = collection.find(&entity_id).await.unwrap();
     assert_eq!(new_bow.words_count, 3);
 
-    let estimation_from_db = graph_client
+    let estimation_from_db = graph_repository
         .get_similarity_estimation(&entity_id, &bow1.entity_id)
         .await;
     assert_eq!(estimation_from_db, 0.725);
 
-    let estimation_from_db = graph_client
+    let estimation_from_db = graph_repository
         .get_similarity_estimation(&entity_id, &bow2.entity_id)
         .await;
     assert_eq!(estimation_from_db, 0.33333334);
 
-    let estimation_from_db = graph_client
+    let estimation_from_db = graph_repository
         .get_similarity_estimation(&entity_id, &bow3.entity_id)
         .await;
     assert_eq!(estimation_from_db, 0.0);
 
     collection.delete_all().await;
-    let _ = graph_client.delete_all().await;
+    let _ = graph_repository.delete_all().await;
 }
