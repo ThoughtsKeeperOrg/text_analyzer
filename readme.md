@@ -15,7 +15,7 @@ text_analyzer:
       - mongo
       - neo4j
 ```
-
+example can be found [here](https://github.com/ThoughtsKeeperOrg/ops/blob/main/docker-compose.yml)
 
 ENV:
 ```
